@@ -1,0 +1,51 @@
+{
+    "name": "statisticlv/laravel-admin-panel",
+    "description": "A comprehensive admin panel for Laravel with authentication and content management",
+    "keywords": ["laravel", "admin", "panel", "cms", "content-management", "authentication"],
+    "type": "library",
+    "license": "MIT",
+    "version": "1.5.0",
+    "authors": [
+        {
+            "name": "StatisticLv",
+            "email": "contact@statistic.lv",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/statisticlv/laravel-admin-panel",
+    "support": {
+        "issues": "https://github.com/statisticlv/laravel-admin-panel/issues",
+        "source": "https://github.com/statisticlv/laravel-admin-panel",
+        "docs": "https://github.com/statisticlv/laravel-admin-panel/blob/main/README.md"
+    },
+    "require": {
+        "php": "^8.1",
+        "laravel/framework": "^10.0|^11.0|^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0|^9.0",
+        "phpunit/phpunit": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "StatisticLv\\AdminPanel\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "StatisticLv\\AdminPanel\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "StatisticLv\\AdminPanel\\AdminPanelServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
