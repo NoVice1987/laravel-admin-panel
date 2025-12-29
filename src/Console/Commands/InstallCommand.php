@@ -34,20 +34,40 @@ class InstallCommand extends Command
             '--force' => $this->option('force'),
         ]);
 
+<<<<<<< HEAD
         // Publish controllers to Laravel default folder (includes admin and frontend controllers)
         $this->info('Publishing controllers (including Frontend controllers)...');
+=======
+        // Publish controllers to Laravel default folder
+        $this->info('Publishing controllers...');
+>>>>>>> b95e348 (Initial commit of Laravel Admin Panel)
         $this->call('vendor:publish', [
             '--tag' => 'admin-panel-controllers',
             '--force' => $this->option('force'),
         ]);
 
+<<<<<<< HEAD
         // Publish web routes (merged admin and frontend routes) to Laravel default folder
         $this->info('Publishing web routes (merged admin and frontend routes)...');
+=======
+        // Publish admin routes to Laravel default folder
+        $this->info('Publishing admin routes...');
+>>>>>>> b95e348 (Initial commit of Laravel Admin Panel)
         $this->call('vendor:publish', [
             '--tag' => 'admin-panel-routes',
             '--force' => $this->option('force'),
         ]);
 
+<<<<<<< HEAD
+=======
+        // Publish frontend routes to Laravel default folder
+        $this->info('Publishing frontend routes...');
+        $this->call('vendor:publish', [
+            '--tag' => 'admin-panel-frontend-routes',
+            '--force' => $this->option('force'),
+        ]);
+
+>>>>>>> b95e348 (Initial commit of Laravel Admin Panel)
         // Publish views to Laravel default views folder
         $this->info('Publishing views to Laravel default folder...');
         $this->call('vendor:publish', [
@@ -91,10 +111,16 @@ class InstallCommand extends Command
         $this->newLine();
         
         $this->info('Published Resources:');
+<<<<<<< HEAD
         $this->line('  Controllers (Admin & Frontend): app/Http/Controllers/');
         $this->line('    - Admin Controllers: app/Http/Controllers/');
         $this->line('    - Frontend Controllers: app/Http/Controllers/Frontend/');
         $this->line('  Web Routes (merged admin & frontend): routes/web.php');
+=======
+        $this->line('  Controllers: app/Http/Controllers/');
+        $this->line('  Admin Routes: routes/admin.php');
+        $this->line('  Frontend Routes: routes/frontend.php');
+>>>>>>> b95e348 (Initial commit of Laravel Admin Panel)
         $this->line('  Views: resources/views/');
         $this->line('  Config: config/admin-panel.php');
         $this->line('  Assets: public/vendor/admin-panel/');

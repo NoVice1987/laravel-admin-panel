@@ -3,6 +3,10 @@
 namespace StatisticLv\AdminPanel;
 
 use Illuminate\Support\ServiceProvider;
+<<<<<<< HEAD
+=======
+use Illuminate\Support\Facades\Route;
+>>>>>>> b95e348 (Initial commit of Laravel Admin Panel)
 use Illuminate\Routing\Router;
 
 class AdminPanelServiceProvider extends ServiceProvider
@@ -25,6 +29,12 @@ class AdminPanelServiceProvider extends ServiceProvider
         // Load views
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'admin-panel');
         
+<<<<<<< HEAD
+=======
+        // Register routes
+        $this->registerRoutes();
+        
+>>>>>>> b95e348 (Initial commit of Laravel Admin Panel)
         // Register middleware
         $this->registerMiddleware();
         
@@ -53,11 +63,29 @@ class AdminPanelServiceProvider extends ServiceProvider
             __DIR__.'/Http/Controllers' => app_path('Http/Controllers'),
         ], 'admin-panel-controllers');
         
+<<<<<<< HEAD
         // Publish web routes (merged admin and frontend routes)
         $this->publishes([
             __DIR__.'/../routes/web.php' => base_path('routes/web.php'),
         ], 'admin-panel-routes');
         
+=======
+        // Publish admin routes
+        $this->publishes([
+            __DIR__.'/../routes/web.php' => base_path('routes/admin.php'),
+        ], 'admin-panel-routes');
+        
+        // Publish frontend routes
+        $this->publishes([
+            __DIR__.'/../routes/frontend.php' => base_path('routes/frontend.php'),
+        ], 'admin-panel-frontend-routes');
+        
+        // Publish all routes
+        $this->publishes([
+            __DIR__.'/../routes' => base_path('routes'),
+        ], 'admin-panel-all-routes');
+        
+>>>>>>> b95e348 (Initial commit of Laravel Admin Panel)
         // Publish assets
         $this->publishes([
             __DIR__.'/../resources/assets' => public_path('vendor/admin-panel'),
@@ -99,6 +127,34 @@ class AdminPanelServiceProvider extends ServiceProvider
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Register package routes
+     */
+    protected function registerRoutes()
+    {
+        // Admin routes
+        Route::group([
+            'prefix' => config('admin-panel.route_prefix', 'admin'),
+            'middleware' => config('admin-panel.middleware', ['web']),
+            'namespace' => 'StatisticLv\AdminPanel\Http\Controllers',
+        ], function () {
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
+
+        // Frontend routes (only if enabled in config)
+        if (config('admin-panel.enable_frontend_routes', true)) {
+            Route::group([
+                'middleware' => ['web'],
+                'namespace' => 'StatisticLv\AdminPanel\Http\Controllers\Frontend',
+            ], function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/frontend.php');
+            });
+        }
+    }
+
+    /**
+>>>>>>> b95e348 (Initial commit of Laravel Admin Panel)
      * Register package middleware
      */
     protected function registerMiddleware()
