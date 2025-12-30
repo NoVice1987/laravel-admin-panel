@@ -4,11 +4,11 @@
     "keywords": ["laravel", "admin", "panel", "cms", "content-management", "authentication"],
     "type": "library",
     "license": "MIT",
-<<<<<<< HEAD
+
     "version": "1.6.0",
-=======
-    "version": "1.5.0",
->>>>>>> b95e348 (Initial commit of Laravel Admin Panel)
+
+
+
     "authors": [
         {
             "name": "StatisticLv",
