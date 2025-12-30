@@ -6,6 +6,7 @@ use StatisticLv\AdminPanel\Http\Controllers\DashboardController;
 use StatisticLv\AdminPanel\Http\Controllers\NewsController;
 use StatisticLv\AdminPanel\Http\Controllers\MenuController;
 use StatisticLv\AdminPanel\Http\Controllers\PageController;
+use StatisticLv\AdminPanel\Http\Controllers\SettingsController;
 use StatisticLv\AdminPanel\Http\Controllers\Frontend\HomeController as FHomeController;
 use StatisticLv\AdminPanel\Http\Controllers\Frontend\NewsController as FNewsController;
 use StatisticLv\AdminPanel\Http\Controllers\Frontend\PageController as FPageController;
@@ -62,6 +63,13 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::post('menus/{menu}/items', [MenuController::class, 'addItem'])->name('admin.menus.items.store');
     Route::put('menus/{menu}/items/{item}', [MenuController::class, 'updateItem'])->name('admin.menus.items.update');
     Route::delete('menus/{menu}/items/{item}', [MenuController::class, 'deleteItem'])->name('admin.menus.items.destroy');
+    
+    // Settings Management
+    Route::get('settings', [SettingsController::class, 'index'])->name('admin.settings.index');
+    Route::get('settings/edit', [SettingsController::class, 'edit'])->name('admin.settings.edit');
+    Route::put('settings', [SettingsController::class, 'update'])->name('admin.settings.update');
+    Route::post('settings', [SettingsController::class, 'store'])->name('admin.settings.store');
+    Route::delete('settings/{setting}', [SettingsController::class, 'destroy'])->name('admin.settings.destroy');
 });
 
 });
