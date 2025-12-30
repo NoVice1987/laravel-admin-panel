@@ -34,24 +34,17 @@ class InstallCommand extends Command
             '--force' => $this->option('force'),
         ]);
 
-        // Publish controllers to Laravel default folder
-        $this->info('Publishing controllers...');
+        // Publish controllers to Laravel default folder (includes admin and frontend controllers)
+        $this->info('Publishing controllers (including Frontend controllers)...');
         $this->call('vendor:publish', [
             '--tag' => 'admin-panel-controllers',
             '--force' => $this->option('force'),
         ]);
 
-        // Publish admin routes to Laravel default folder
-        $this->info('Publishing admin routes...');
+        // Publish web routes (merged admin and frontend routes) to Laravel default folder
+        $this->info('Publishing web routes (merged admin and frontend routes)...');
         $this->call('vendor:publish', [
             '--tag' => 'admin-panel-routes',
-            '--force' => $this->option('force'),
-        ]);
-
-        // Publish frontend routes to Laravel default folder
-        $this->info('Publishing frontend routes...');
-        $this->call('vendor:publish', [
-            '--tag' => 'admin-panel-frontend-routes',
             '--force' => $this->option('force'),
         ]);
 
@@ -98,9 +91,10 @@ class InstallCommand extends Command
         $this->newLine();
         
         $this->info('Published Resources:');
-        $this->line('  Controllers: app/Http/Controllers/');
-        $this->line('  Admin Routes: routes/admin.php');
-        $this->line('  Frontend Routes: routes/frontend.php');
+        $this->line('  Controllers (Admin & Frontend): app/Http/Controllers/');
+        $this->line('    - Admin Controllers: app/Http/Controllers/');
+        $this->line('    - Frontend Controllers: app/Http/Controllers/Frontend/');
+        $this->line('  Web Routes (merged admin & frontend): routes/web.php');
         $this->line('  Views: resources/views/');
         $this->line('  Config: config/admin-panel.php');
         $this->line('  Assets: public/vendor/admin-panel/');

@@ -6,7 +6,9 @@ use StatisticLv\AdminPanel\Http\Controllers\DashboardController;
 use StatisticLv\AdminPanel\Http\Controllers\NewsController;
 use StatisticLv\AdminPanel\Http\Controllers\MenuController;
 use StatisticLv\AdminPanel\Http\Controllers\PageController;
-
+use StatisticLv\AdminPanel\Http\Controllers\Frontend\HomeController as FHomeController;
+use StatisticLv\AdminPanel\Http\Controllers\Frontend\NewsController as FNewsController;
+use StatisticLv\AdminPanel\Http\Controllers\Frontend\PageController as FPageController;
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/login', [AuthController::class, 'login'])->name('admin.login.post');
@@ -57,3 +59,14 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::put('menus/{menu}/items/{item}', [MenuController::class, 'updateItem'])->name('admin.menus.items.update');
     Route::delete('menus/{menu}/items/{item}', [MenuController::class, 'deleteItem'])->name('admin.menus.items.destroy');
 });
+
+
+// Homepage
+Route::get('/', [FHomeController::class, 'index'])->name('home');
+
+// News routes
+Route::get('/news', [FNewsController::class, 'index'])->name('news.index');
+Route::get('/news/{slug}', [NewsController::class, 'show'])->name('news.show');
+
+// Page routes - this should be last to act as catch-all
+Route::get('/{slug}', [FPageController::class, 'show'])->name('page.show');

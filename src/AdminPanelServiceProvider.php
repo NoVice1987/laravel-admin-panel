@@ -3,7 +3,6 @@
 namespace StatisticLv\AdminPanel;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Routing\Router;
 
 class AdminPanelServiceProvider extends ServiceProvider
@@ -25,9 +24,6 @@ class AdminPanelServiceProvider extends ServiceProvider
         
         // Load views
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'admin-panel');
-        
-        // Register routes
-        $this->registerRoutes();
         
         // Register middleware
         $this->registerMiddleware();
@@ -57,20 +53,10 @@ class AdminPanelServiceProvider extends ServiceProvider
             __DIR__.'/Http/Controllers' => app_path('Http/Controllers'),
         ], 'admin-panel-controllers');
         
-        // Publish admin routes
+        // Publish web routes (merged admin and frontend routes)
         $this->publishes([
-            __DIR__.'/../routes/web.php' => base_path('routes/admin.php'),
+            __DIR__.'/../routes/web.php' => base_path('routes/web.php'),
         ], 'admin-panel-routes');
-        
-        // Publish frontend routes
-        $this->publishes([
-            __DIR__.'/../routes/frontend.php' => base_path('routes/frontend.php'),
-        ], 'admin-panel-frontend-routes');
-        
-        // Publish all routes
-        $this->publishes([
-            __DIR__.'/../routes' => base_path('routes'),
-        ], 'admin-panel-all-routes');
         
         // Publish assets
         $this->publishes([
@@ -109,31 +95,6 @@ class AdminPanelServiceProvider extends ServiceProvider
                     'model' => \StatisticLv\AdminPanel\Models\AdminUser::class,
                 ]
             ]);
-        }
-    }
-
-    /**
-     * Register package routes
-     */
-    protected function registerRoutes()
-    {
-        // Admin routes
-        Route::group([
-            'prefix' => config('admin-panel.route_prefix', 'admin'),
-            'middleware' => config('admin-panel.middleware', ['web']),
-            'namespace' => 'StatisticLv\AdminPanel\Http\Controllers',
-        ], function () {
-            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-        });
-
-        // Frontend routes (only if enabled in config)
-        if (config('admin-panel.enable_frontend_routes', true)) {
-            Route::group([
-                'middleware' => ['web'],
-                'namespace' => 'StatisticLv\AdminPanel\Http\Controllers\Frontend',
-            ], function () {
-                $this->loadRoutesFrom(__DIR__.'/../routes/frontend.php');
-            });
         }
     }
 
