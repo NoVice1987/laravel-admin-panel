@@ -10,6 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Initial Release** - First stable version of Laravel Admin Panel
 
+### User Management (Super Admin Only)
+- Full CRUD operations for admin users
+- Create new admin users with role assignment (admin or super_admin)
+- Edit existing admin users with password update support
+- Delete admin users with soft delete support
+- Restore soft-deleted users
+- Permanently delete users
+- View user details with associated news articles
+- Password strength validation (8+ characters, uppercase, lowercase, number)
+- Self-protection (admins cannot delete/deactivate themselves)
+- Role change prevention for current user
+- Activity logging for all user management operations
+
 ### Authentication
 - Separate admin authentication system with dedicated guard
 - Admin user model with role-based access control (admin, super_admin)
@@ -128,6 +141,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Menus: full CRUD operations
   - Menu Items: add, update, delete items
   - Settings: view, edit, update settings
+  - Users: full CRUD operations (Super Admin only)
+  - User restore and force delete (Super Admin only)
 
 - **Frontend Routes**
   - Homepage: GET /
@@ -137,6 +152,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Middleware
 - `admin.auth` - Authentication middleware for admin routes
+- `super.admin` - Authorization middleware for super admin only routes
 - Automatic guard configuration in service provider
 
 ### Views
@@ -146,6 +162,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - News management (index, create, edit)
   - Page management (index, create, edit)
   - Menu management (index, create, edit)
+  - User management (index, create, edit, show) - Super Admin only
   - Settings management (index, edit)
   - Admin layout template
 
@@ -174,7 +191,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 - Separate admin authentication guard
-- Role-based access control
+- Role-based access control (admin and super_admin)
+- Super admin exclusive routes for sensitive operations
+- Self-protection (admins cannot delete/deactivate themselves)
 - CSRF protection on all forms
 - SQL injection protection via Eloquent
 - XSS protection via Blade templating

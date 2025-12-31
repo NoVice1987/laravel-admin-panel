@@ -99,11 +99,12 @@ config([
 }
 
 /**
-    * Register package middleware
-    */
+ * Register package middleware
+ */
 protected function registerMiddleware()
 {
-$router = $this->app->make(Router::class);
-$router->aliasMiddleware('admin.auth', \StatisticLv\AdminPanel\Http\Middleware\AdminAuth::class);
+    $router = $this->app->make(Router::class);
+    $router->aliasMiddleware('admin.auth', \StatisticLv\AdminPanel\Http\Middleware\AdminAuth::class);
+    $router->aliasMiddleware('super.admin', \StatisticLv\AdminPanel\Http\Middleware\SuperAdmin::class);
 }
 }

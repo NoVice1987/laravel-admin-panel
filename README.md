@@ -9,6 +9,7 @@ A comprehensive admin panel package for Laravel with authentication, content man
 ## Features
 
 - 🔐 **Secure Authentication** - Separate admin authentication with role-based access control (admin, super_admin)
+- 👥 **User Management** - Super admin can manage all admin users with full CRUD operations
 - 📰 **News Management** - Create, edit, publish, and archive news articles with featured images
 - 📄 **Page Management** - Manage static pages with custom templates and SEO metadata
 - 🗂️ **Menu Management** - Create and manage nested menu structures for different locations
@@ -286,6 +287,9 @@ $excerpt = admin_excerpt($htmlContent, 200);
 - `PUT /admin/menus/{menu}/items/{item}` - Update menu item
 - `DELETE /admin/menus/{menu}/items/{item}` - Delete menu item
 - `GET|POST|PUT|DELETE /admin/settings` - Settings management
+- `GET|POST|PUT|DELETE /admin/users` - User management (CRUD, Super Admin only)
+- `POST /admin/users/{user}/restore` - Restore soft-deleted user (Super Admin only)
+- `DELETE /admin/users/{user}/force-delete` - Permanently delete user (Super Admin only)
 
 ### Frontend Routes
 
@@ -316,16 +320,25 @@ if (Auth::guard('admin')->check()) {
 ### Roles
 
 Two roles are available:
-- `admin` - Regular admin with standard permissions
-- `super_admin` - Super admin with full permissions
+- `admin` - Regular admin with standard permissions (news, pages, menus, settings)
+- `super_admin` - Super admin with full permissions including user management
 
 ### Middleware
 
-The package includes the `admin.auth` middleware to protect admin routes:
+The package includes the following middleware:
+
+- `admin.auth` - Authentication middleware for admin routes
+- `super.admin` - Authorization middleware for super admin only routes
 
 ```php
+// Protect admin routes (requires authentication)
 Route::middleware(['admin.auth'])->group(function () {
     // Protected admin routes
+});
+
+// Protect super admin routes (requires super admin role)
+Route::middleware(['super.admin'])->group(function () {
+    // Super admin only routes (e.g., user management)
 });
 ```
 
@@ -344,6 +357,10 @@ The package publishes views to `resources/views/`:
 - `menus/index.blade.php` - Menus listing
 - `menus/create.blade.php` - Create menu form
 - `menus/edit.blade.php` - Edit menu form
+- `users/index.blade.php` - Users listing (Super Admin only)
+- `users/create.blade.php` - Create user form (Super Admin only)
+- `users/edit.blade.php` - Edit user form (Super Admin only)
+- `users/show.blade.php` - User details view (Super Admin only)
 - `settings/index.blade.php` - Settings listing
 - `settings/edit.blade.php` - Edit settings form
 - `frontend/home.blade.php` - Homepage
@@ -399,7 +416,9 @@ Tests cover:
 
 - Password strength validation (minimum 8 characters, uppercase, lowercase, number)
 - Rate limiting on login attempts
-- Role-based access control
+- Role-based access control (admin and super_admin roles)
+- Super admin exclusive routes for sensitive operations
+- Self-protection (admins cannot delete/deactivate themselves)
 - CSRF protection
 - SQL injection protection via Eloquent ORM
 

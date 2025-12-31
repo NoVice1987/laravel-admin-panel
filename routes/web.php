@@ -7,6 +7,7 @@ use StatisticLv\AdminPanel\Http\Controllers\NewsController;
 use StatisticLv\AdminPanel\Http\Controllers\MenuController;
 use StatisticLv\AdminPanel\Http\Controllers\PageController;
 use StatisticLv\AdminPanel\Http\Controllers\SettingsController;
+use StatisticLv\AdminPanel\Http\Controllers\UserController;
 use StatisticLv\AdminPanel\Http\Controllers\Frontend\HomeController as FHomeController;
 use StatisticLv\AdminPanel\Http\Controllers\Frontend\NewsController as FNewsController;
 use StatisticLv\AdminPanel\Http\Controllers\Frontend\PageController as FPageController;
@@ -70,6 +71,21 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::put('settings', [SettingsController::class, 'update'])->name('admin.settings.update');
     Route::post('settings', [SettingsController::class, 'store'])->name('admin.settings.store');
     Route::delete('settings/{setting}', [SettingsController::class, 'destroy'])->name('admin.settings.destroy');
+    
+    // User Management (Super Admin Only)
+    Route::middleware(['super.admin'])->group(function () {
+        Route::resource('users', UserController::class)->names([
+            'index' => 'admin.users.index',
+            'create' => 'admin.users.create',
+            'store' => 'admin.users.store',
+            'show' => 'admin.users.show',
+            'edit' => 'admin.users.edit',
+            'update' => 'admin.users.update',
+            'destroy' => 'admin.users.destroy',
+        ]);
+        Route::post('users/{user}/restore', [UserController::class, 'restore'])->name('admin.users.restore');
+        Route::delete('users/{user}/force-delete', [UserController::class, 'forceDelete'])->name('admin.users.force-delete');
+    });
 });
 
 });
