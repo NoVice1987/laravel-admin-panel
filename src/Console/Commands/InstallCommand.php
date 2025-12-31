@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use StatisticLv\AdminPanel\Database\Seeders\DemoDataSeeder;
-
+use StatisticLv\AdminPanel\Database\Seeders\SettingsSeeder;
 class InstallCommand extends Command
 {
     protected $signature = 'admin-panel:install 
@@ -60,6 +60,14 @@ class InstallCommand extends Command
         if ($this->option('force') || $this->confirm('Do you want to run migrations now?', true)) {
             $this->call('migrate');
         }
+
+
+            $this->info('Seeding Settings table...');
+            $set_seeder = new SettingsSeeder();
+            $set_seeder->run();
+            $this->info('✓ Settings table installed successfully!');
+            $this->newLine();
+
 
         // Install demo data
         if ($this->option('demo') || $this->confirm('Do you want to install demo data?', true)) {
