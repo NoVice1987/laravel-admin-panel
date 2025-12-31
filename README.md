@@ -1,305 +1,435 @@
 # Laravel Admin Panel
 
-[![Latest Version](https://img.shields.io/packagist/v/statisticlv/laravel-admin-panel)](https://packagist.org/packages/statisticlv/laravel-admin-panel)
-[![Total Downloads](https://img.shields.io/packagist/dt/statisticlv/laravel-admin-panel)](https://packagist.org/packages/statisticlv/laravel-admin-panel)
-[![License](https://img.shields.io/packagist/l/statisticlv/laravel-admin-panel)](https://packagist.org/packages/statisticlv/laravel-admin-panel)
-[![PHP Version](https://img.shields.io/packagist/php-v/statisticlv/laravel-admin-panel)](https://packagist.org/packages/statisticlv/laravel-admin-panel)
-[![Laravel](https://img.shields.io/badge/laravel-10.x%20%7C%2011.x%20%7C%2012.x-ff2d20.svg)](https://laravel.com)
+A comprehensive admin panel package for Laravel with authentication, content management, and frontend integration. This package provides a complete CMS solution with news management, pages, menus, settings, and a built-in frontend.
 
-A comprehensive admin panel for Laravel with authentication, news management, and menu management functionality.
+## Version
+
+**Current Version:** 1.0.0
 
 ## Features
 
-- **Authentication System**: Secure admin authentication with rate limiting and password strength validation
-- **News Management**: Create, edit, and manage news articles with draft/published/archived status
-- **Menu Management**: Dynamic menu system with hierarchical structure and multiple locations
-- **Role-Based Access**: Admin and Super Admin roles with appropriate permissions
-- **Soft Deletes**: All models support soft deletes for data recovery
-- **Caching**: Built-in caching for improved performance
-- **Logging**: Comprehensive logging for security and audit trails
-- **Type Safety**: Full type hints and PHPDoc blocks throughout
+- 🔐 **Secure Authentication** - Separate admin authentication with role-based access control (admin, super_admin)
+- 📰 **News Management** - Create, edit, publish, and archive news articles with featured images
+- 📄 **Page Management** - Manage static pages with custom templates and SEO metadata
+- 🗂️ **Menu Management** - Create and manage nested menu structures for different locations
+- ⚙️ **Settings Management** - Dynamic settings system with grouping and type casting
+- 🎨 **Frontend Integration** - Built-in frontend routes and controllers for immediate use
+- 🔄 **Soft Deletes** - All main models support soft deletes for data recovery
+- 🔗 **Slug Generation** - Automatic URL-friendly slug generation
+- 💾 **Caching** - Built-in cache management for improved performance
+- 📝 **Activity Logging** - Automatic logging of admin actions
+- ✅ **Testing** - PHPUnit tests included for authentication features
+
+## Requirements
+
+- PHP 8.1 or higher
+- Laravel 10.0, 11.0, or 12.0
 
 ## Installation
 
-### Requirements
+### Step 1: Install via Composer
 
-- PHP 8.1 or higher
-- Laravel 10.x, 11.x, or 12.x
-
-### Steps
-
-1. Install the package via Composer:
 ```bash
 composer require statisticlv/laravel-admin-panel
 ```
 
-2. Publish the configuration file:
+### Step 2: Install the Package
+
+Run the installation command to publish all necessary files:
+
 ```bash
-php artisan vendor:publish --tag=admin-panel-config
+php artisan admin-panel:install
 ```
 
-3. Run the migrations:
+The installation command will:
+- Publish configuration file to `config/admin-panel.php`
+- Publish database migrations
+- Publish controllers to `app/Http/Controllers/`
+- Publish web routes to `routes/web.php`
+- Publish views to `resources/views/`
+- Publish assets to `public/vendor/admin-panel/`
+- Run database migrations
+- Seed settings table
+- Optionally install demo data
+
+### Step 3: Install with Demo Data (Optional)
+
+To install with sample data for testing:
+
 ```bash
-php artisan migrate
+php artisan admin-panel:install --demo
 ```
 
-4. Create an admin user:
+Demo credentials:
+- **Email:** admin@example.com
+- **Password:** password
+
+## Configuration
+
+After installation, you can customize the package by editing `config/admin-panel.php`:
+
+```php
+return [
+    // Admin panel route prefix
+    'route_prefix' => 'admin',
+
+    // Middleware applied to admin routes
+    'middleware' => ['web'],
+
+    // Enable default frontend routes
+    'enable_frontend_routes' => true,
+
+    // Authentication guard
+    'guard' => 'admin',
+
+    // Admin panel title
+    'title' => 'Admin Panel',
+
+    // Items per page in list views
+    'per_page' => 15,
+
+    // Default date format
+    'date_format' => 'Y-m-d H:i:s',
+];
+```
+
+## Available Commands
+
+### Create Admin User
+
+Create a new admin user via command line:
+
 ```bash
 php artisan admin:create-user
 ```
 
-## Configuration
+Options:
+- `--name` - The name of the admin user
+- `--email` - The email of the admin user
+- `--password` - The password for the admin user
+- `--role` - The role (admin or super_admin, default: admin)
 
-The configuration file is located at `config/admin-panel.php`. You can customize:
+Example:
+```bash
+php artisan admin:create-user --name="John Doe" --email="john@example.com" --password="SecurePass123" --role="super_admin"
+```
 
-- Route prefix (default: `admin`)
-- Middleware stack
-- Admin guard
-- Panel title
-- Pagination settings
-- Date format
+## Database Tables
 
-## Security Features
+The package creates the following tables:
 
-### Rate Limiting
-Login attempts are rate-limited to 5 attempts per minute per IP address to prevent brute force attacks.
-
-### Password Strength
-Passwords must meet the following requirements:
-- Minimum 8 characters
-- At least one uppercase letter
-- At least one lowercase letter
-- At least one number
-- Special characters recommended
-
-### Authorization
-- Only Super Admins can delete menus
-- Only Super Admins or the original author can delete news articles
-- Inactive users cannot access the admin panel
+- `admin_users` - Admin user accounts with roles and status
+- `news` - News articles with status, author, and view counts
+- `pages` - Static pages with templates and SEO metadata
+- `menus` - Menu definitions with locations
+- `menu_items` - Individual menu items with support for nesting
+- `settings` - Dynamic key-value settings with grouping
 
 ## Models
 
 ### AdminUser
-Admin user model with authentication support.
 
-**Properties:**
-- `name` - User's full name
-- `email` - User's email (unique)
-- `password` - Hashed password
-- `role` - User role: `admin` or `super_admin`
-- `is_active` - Whether the account is active
+Admin user model with role-based access control.
 
-**Methods:**
-- `isSuperAdmin()` - Check if user is a super admin
-- `isAdmin()` - Check if user is an admin (regular or super)
+```php
+use StatisticLv\AdminPanel\Models\AdminUser;
+
+// Check if user is super admin
+$user->isSuperAdmin(); // bool
+
+// Check if user is admin (regular or super)
+$user->isAdmin(); // bool
+
+// Get news articles by author
+$user->news;
+```
 
 ### News
+
 News article model with publishing workflow.
 
-**Properties:**
-- `title` - Article title
-- `slug` - URL-friendly slug (auto-generated)
-- `excerpt` - Short summary
-- `content` - Full article content
-- `featured_image` - URL to featured image
-- `status` - Article status: `draft`, `published`, or `archived`
-- `published_at` - Publication date
-- `author_id` - Foreign key to admin_users
-- `views_count` - View counter
+```php
+use StatisticLv\AdminPanel\Models\News;
 
-**Scopes:**
-- `published()` - Filter published articles
-- `draft()` - Filter draft articles
+// Get published news
+$publishedNews = News::published()->get();
 
-**Methods:**
-- `isPublished()` - Check if article is published
-- `incrementViews()` - Increment the view counter
+// Get draft news
+$draftNews = News::draft()->get();
 
-### Menu
-Menu model for organizing navigation items.
+// Check if published
+$news->isPublished(); // bool
 
-**Properties:**
-- `name` - Menu display name
-- `slug` - URL-friendly slug (auto-generated)
-- `location` - Menu location: `main`, `footer`, or `sidebar`
-- `is_active` - Whether the menu is active
+// Increment view count
+$news->incrementViews();
+```
 
-**Relationships:**
-- `items()` - Root menu items (no parent)
-- `allItems()` - All menu items (including nested)
+### Page
 
-### MenuItem
-Individual menu item with hierarchical support.
+Page model with SEO support.
 
-**Properties:**
-- `menu_id` - Foreign key to menus
-- `parent_id` - Parent menu item (for nesting)
-- `title` - Item display text
-- `url` - Direct URL
-- `route` - Laravel route name
-- `target` - Link target: `_self` or `_blank`
-- `css_class` - Custom CSS classes
-- `order` - Display order
-- `is_active` - Whether the item is active
+```php
+use StatisticLv\AdminPanel\Models\Page;
 
-**Relationships:**
-- `menu()` - Parent menu
-- `parent()` - Parent menu item
-- `children()` - Child menu items
+// Get published pages
+$pages = Page::published()->get();
+
+// Get meta title (falls back to title)
+$page->meta_title;
+
+// Get meta description (falls back to excerpt)
+$page->meta_description;
+```
+
+### Menu & MenuItem
+
+Menu management with nested structure.
+
+```php
+use StatisticLv\AdminPanel\Models\Menu;
+
+$menu = Menu::where('slug', 'main')->first();
+
+// Get root items only
+$items = $menu->items;
+
+// Get all items including nested
+$allItems = $menu->allItems;
+```
+
+### Setting
+
+Dynamic settings management.
+
+```php
+use StatisticLv\AdminPanel\Models\Setting;
+
+// Get a setting value
+$value = Setting::getValue('site_name', 'Default Name');
+
+// Set a setting value
+Setting::setValue('site_name', 'My Site');
+
+// Get all settings grouped
+$groupedSettings = Setting::getAllGrouped();
+
+// Get all settings as array
+$settingsArray = Setting::getAllAsArray();
+```
 
 ## Helper Functions
 
-The package provides several helper functions:
+The package provides global helper functions for easy access to data:
 
-### Menu Functions
+### Menu Helpers
+
 ```php
-// Get a menu by slug
-$menu = admin_menu('main-menu');
-
-// Get a menu by location
-$menu = admin_menu('main', 'location');
+// Get a menu by identifier
+$menu = admin_menu('main');
 
 // Render a menu as HTML
-echo admin_render_menu('main-menu');
-
-// Render with custom options
-echo admin_render_menu('main-menu', 'slug', [
-    'ul_class' => 'custom-menu',
-    'li_class' => 'custom-item',
-]);
+echo admin_render_menu('main', 'slug', ['class' => 'nav-menu']);
 ```
 
-### News Functions
+### News Helpers
+
 ```php
 // Get published news
-$news = admin_news(limit: 10);
+$news = admin_news($limit = 10, $paginate = 15);
 
-// Get paginated news
-$news = admin_news(paginate: 15);
-
-// Get a single article by slug
+// Get news by slug
 $article = admin_news_by_slug('my-article');
 
 // Get latest news
 $latest = admin_latest_news(5);
 
-// Get popular news (by views)
+// Get popular news
 $popular = admin_popular_news(5);
 ```
 
-### Utility Functions
+### Page Helpers
+
 ```php
-// Format a date
-echo admin_format_date($date, 'Y-m-d');
+// Get page by slug
+$page = admin_page_by_slug('about-us');
+
+// Get all published pages
+$pages = admin_pages($limit = 10);
+```
+
+### Utility Helpers
+
+```php
+// Format date
+$formattedDate = admin_format_date($date, 'Y-m-d');
 
 // Truncate text
-echo admin_truncate($text, 100);
+$truncated = admin_truncate($text, 100, '...');
 
 // Get excerpt from HTML
-echo admin_excerpt($htmlContent, 200);
+$excerpt = admin_excerpt($htmlContent, 200);
 ```
 
 ## Routes
 
-All admin routes are prefixed with the configured route prefix (default: `admin`).
+### Admin Routes (Prefix: /admin)
 
-### Authentication
-- `GET /admin/login` - Login form
-- `POST /admin/login` - Login submit
-- `POST /admin/logout` - Logout
-
-### Dashboard
+- `GET /admin/login` - Login page
+- `POST /admin/login` - Login action
+- `POST /admin/logout` - Logout action
 - `GET /admin` - Dashboard
 - `GET /admin/dashboard` - Dashboard
-
-### News Management
-- `GET /admin/news` - List news
-- `GET /admin/news/create` - Create form
-- `POST /admin/news` - Store news
-- `GET /admin/news/{news}` - Show news
-- `GET /admin/news/{news}/edit` - Edit form
-- `PUT /admin/news/{news}` - Update news
-- `DELETE /admin/news/{news}` - Delete news
-
-### Menu Management
-- `GET /admin/menus` - List menus
-- `GET /admin/menus/create` - Create form
-- `POST /admin/menus` - Store menu
-- `GET /admin/menus/{menu}` - Show menu
-- `GET /admin/menus/{menu}/edit` - Edit form
-- `PUT /admin/menus/{menu}` - Update menu
-- `DELETE /admin/menus/{menu}` - Delete menu
+- `GET|POST|PUT|DELETE /admin/news` - News management (CRUD)
+- `GET|POST|PUT|DELETE /admin/pages` - Page management (CRUD)
+- `GET|POST|PUT|DELETE /admin/menus` - Menu management (CRUD)
 - `POST /admin/menus/{menu}/items` - Add menu item
 - `PUT /admin/menus/{menu}/items/{item}` - Update menu item
 - `DELETE /admin/menus/{menu}/items/{item}` - Delete menu item
+- `GET|POST|PUT|DELETE /admin/settings` - Settings management
 
-## Caching
+### Frontend Routes
 
-The package uses Laravel's cache system to improve performance:
+- `GET /` - Homepage
+- `GET /news` - News listing
+- `GET /news/{slug}` - Single news article
+- `GET /{slug}` - Page (catch-all route)
 
-- Dashboard stats: Cached for 5 minutes
-- Menus: Cached for 1 hour
-- News articles: Cached for 5-10 minutes depending on query type
+## Authentication
 
-Cache is automatically cleared when data is modified.
+The package uses a separate authentication guard for admin users:
+
+```php
+// Authenticate admin user
+if (Auth::guard('admin')->attempt($credentials)) {
+    // Success
+}
+
+// Get authenticated admin user
+$admin = Auth::guard('admin')->user();
+
+// Check authentication
+if (Auth::guard('admin')->check()) {
+    // User is authenticated
+}
+```
+
+### Roles
+
+Two roles are available:
+- `admin` - Regular admin with standard permissions
+- `super_admin` - Super admin with full permissions
+
+### Middleware
+
+The package includes the `admin.auth` middleware to protect admin routes:
+
+```php
+Route::middleware(['admin.auth'])->group(function () {
+    // Protected admin routes
+});
+```
+
+## Views
+
+The package publishes views to `resources/views/`:
+
+- `auth/login.blade.php` - Admin login page
+- `dashboard/index.blade.php` - Admin dashboard
+- `news/index.blade.php` - News listing
+- `news/create.blade.php` - Create news form
+- `news/edit.blade.php` - Edit news form
+- `pages/index.blade.php` - Pages listing
+- `pages/create.blade.php` - Create page form
+- `pages/edit.blade.php` - Edit page form
+- `menus/index.blade.php` - Menus listing
+- `menus/create.blade.php` - Create menu form
+- `menus/edit.blade.php` - Edit menu form
+- `settings/index.blade.php` - Settings listing
+- `settings/edit.blade.php` - Edit settings form
+- `frontend/home.blade.php` - Homepage
+- `frontend/news/index.blade.php` - News listing (frontend)
+- `frontend/news/show.blade.php` - Single news article (frontend)
+- `frontend/pages/default.blade.php` - Default page template (frontend)
+- `layouts/app.blade.php` - Admin layout
+- `frontend/layouts/app.blade.php` - Frontend layout
+
+## Customization
+
+### Customizing Controllers
+
+After installation, controllers are published to `app/Http/Controllers/`. You can modify them to add custom logic:
+
+```php
+// app/Http/Controllers/NewsController.php
+
+namespace App\Http\Controllers;
+
+use StatisticLv\AdminPanel\Models\News;
+
+class NewsController extends \StatisticLv\AdminPanel\Http\Controllers\NewsController
+{
+    // Override methods or add new ones
+}
+```
+
+### Customizing Views
+
+All views are published to `resources/views/` and can be customized as needed.
+
+### Customizing Routes
+
+The web routes file is published to `routes/web.php`. You can modify routes or add new ones.
 
 ## Testing
 
-Run the test suite:
+Run the included tests:
 
 ```bash
 php artisan test
 ```
 
-The package includes comprehensive tests for:
-- Authentication
-- Authorization
+Tests cover:
+- Admin authentication
+- Login validation
 - Rate limiting
-- CRUD operations
+- Authorization checks
+- Session management
 
-## Logging
+## Security
 
-All important actions are logged for security and audit purposes:
+- Password strength validation (minimum 8 characters, uppercase, lowercase, number)
+- Rate limiting on login attempts
+- Role-based access control
+- CSRF protection
+- SQL injection protection via Eloquent ORM
 
-- Login attempts (success and failure)
-- Unauthorized access attempts
-- CRUD operations (create, update, delete)
-- Inactive user access attempts
+## Performance
 
-Logs are stored in Laravel's default log channels.
-
-## Security Best Practices
-
-1. **Always use HTTPS** in production
-2. **Keep dependencies updated**
-3. **Use strong passwords** (enforced by the system)
-4. **Review logs regularly** for suspicious activity
-5. **Implement 2FA** for additional security (not included by default)
-6. **Use environment variables** for sensitive configuration
-
-## Troubleshooting
-
-### Login Issues
-- Check that the user is active (`is_active = true`)
-- Verify the password meets strength requirements
-- Check rate limiting logs if login is blocked
-
-### Cache Issues
-Clear the cache if changes don't appear:
-```bash
-php artisan cache:clear
-```
-
-### Migration Issues
-If you have existing tables, use the soft deletes migration:
-```bash
-php artisan migrate --path=database/migrations/2024_01_01_000004_add_soft_deletes_to_existing_tables.php
-```
-
-## License
-
-MIT License - see LICENSE file for details.
+- Database indexing on frequently queried columns
+- Soft deletes for data recovery
+- Caching support for news articles
+- Optimized queries with eager loading
 
 ## Support
 
-For issues and feature requests, please use the project's issue tracker.
+- **Issues:** https://github.com/statisticlv/laravel-admin-panel/issues
+- **Source:** https://github.com/statisticlv/laravel-admin-panel
+- **Documentation:** https://github.com/statisticlv/laravel-admin-panel/blob/main/README.md
+
+## License
+
+This package is open-source software licensed under the [MIT License](LICENSE).
+
+## Credits
+
+- **Developer:** StatisticLv
+- **Email:** contact@statistic.lv
+- **Website:** https://statistic.lv
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history and changes.
